@@ -1,0 +1,17 @@
+.coding-theory-labeled-input {
+    padding-top: 10px;
+
+    .coding-theory-input {
+        width: calc(100% - 15px);
+        height: 32px;
+        border: 1px solid gray;
+    }
+
+    .coding-theory-error-message {
+        display: block;
+        min-width: fit-content;
+        padding-inline-end: 10px;
+        color: red;
+        margin: 0;
+    }
+}
