@@ -1,6 +1,6 @@
 import React from 'react';
-import './labeled-input.scss';
 import { Label } from './label';
+import './labeled-input.scss';
 
 export type LabeledInputProps = {
     id: string;
@@ -18,10 +18,7 @@ export const LabeledInput: React.FC<LabeledInputProps> = props => {
 
     return (
         <div className={`coding-theory-labeled-input ${props.className ?? ''}`} aria-description={id}>
-            <section style={{ display: 'inline-flex' }}>
-                <Label id={id} title={title} />
-                {errorMessage && <p className="coding-theory-error-message">{errorMessage}</p>}
-            </section>
+            <Label id={id} title={title} errorMessage={errorMessage} />
             <input
                 {...rest}
                 id={id}

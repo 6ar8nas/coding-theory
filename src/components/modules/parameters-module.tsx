@@ -1,17 +1,19 @@
 import React from 'react';
-import { LabeledInput } from '../labeled-controls/labeled-input';
+import { LabeledInput } from '../labeled-controls';
 
 export type ParametersModuleProps = {
     setDistortionProbability: (value: number) => void;
     distortionProbability: number;
 };
 
+/** Module responsible for modifying of parameters, used in other modules. */
 export const ParametersModule: React.FC<ParametersModuleProps> = props => {
     const { distortionProbability, setDistortionProbability } = props;
 
-    const [errorMessage, setErrorMessage] = React.useState<string>();
     const [displayValue, setDisplayValue] = React.useState<string>(distortionProbability.toString());
+    const [errorMessage, setErrorMessage] = React.useState<string>();
 
+    // A validating setter function for distortion probability input.
     const onChange = React.useCallback(
         (value: string) => {
             setDisplayValue(value);
@@ -29,16 +31,14 @@ export const ParametersModule: React.FC<ParametersModuleProps> = props => {
     );
 
     return (
-        <>
-            <LabeledInput
-                id="distortion-param"
-                inputMode="numeric"
-                title="Change channel distortion probability"
-                placeholder="Enter a number between 0 and 1."
-                value={displayValue}
-                setValue={onChange}
-            />
-            {errorMessage && <p>{errorMessage}</p>}
-        </>
+        <LabeledInput
+            id="distortion-param"
+            inputMode="numeric"
+            title="Change channel distortion probability"
+            placeholder="Enter a number between 0 and 1."
+            value={displayValue}
+            setValue={onChange}
+            errorMessage={errorMessage}
+        />
     );
 };

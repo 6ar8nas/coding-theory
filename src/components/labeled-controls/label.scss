@@ -1,5 +1,16 @@
-.coding-theory-label {
-    display: block;
-    min-width: fit-content;
-    padding-inline-end: 10px;
+.coding-theory-label-wrapper {
+    display: flex;
+
+    .coding-theory-label {
+        display: block;
+        min-width: fit-content;
+        padding-inline-end: 10px;
+    }
+
+    .coding-theory-label-error-message {
+        display: block;
+        min-width: fit-content;
+        padding-inline-start: 10px;
+        color: red;
+    }
 }

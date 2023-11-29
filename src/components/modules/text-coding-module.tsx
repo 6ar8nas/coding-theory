@@ -1,5 +1,4 @@
 import React from 'react';
-import { LabeledTextArea } from '../labeled-controls/labeled-text-area';
 import {
     encode,
     sendThroughChannel,
@@ -9,20 +8,27 @@ import {
     countPaddedCharacters,
 } from '../../utils';
 import { Channel } from '../channel/channel';
-import { CodingModuleProps } from '../../data-types/coding-module-props';
+import { CodingModuleProps } from '../../data-types';
+import { LabeledTextArea } from '../labeled-controls';
 
-// TODO: error handling, comments
+/** Module responsible for assignment's text string coding tasks. */
 export const TextCodingModule: React.FC<CodingModuleProps> = props => {
     const { distortionProbability } = props;
 
     const [initialValue, setInitialValue] = React.useState<string>('');
+
+    // Converting the initial value to binary
     const initialBinaryValue = React.useMemo(() => convertTextToBinary(initialValue), [initialValue]);
 
+    // Processing non-coded content binary string, distorting it through the channel and converting it
+    // back to a text string.
     const insecureValue = React.useMemo(() => {
         const receivedBinaryValue = sendThroughChannel(initialBinaryValue, distortionProbability);
         return convertBinaryToText(receivedBinaryValue);
     }, [distortionProbability, initialBinaryValue]);
 
+    // Coding the content binary string and then processing it - distorting it through the channel and
+    // converting it back to a text string.
     const secureValue = React.useMemo(() => {
         const encodedBinaryValue = encode(initialBinaryValue);
         const paddedCharactersCount = countPaddedCharacters(initialBinaryValue);

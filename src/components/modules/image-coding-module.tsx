@@ -3,44 +3,57 @@ import {
     encode,
     sendThroughChannel,
     decode,
-    convertBlobToBinary,
-    convertBinaryToBlob,
+    convertBlobToImageFileData,
+    convertImageFileDataToBlob,
     countPaddedCharacters,
 } from '../../utils';
 import { Channel } from '../channel/channel';
-import { CodingModuleProps } from '../../data-types/coding-module-props';
-import { LabeledFileUpload } from '../labeled-controls/labeled-file-upload';
-import { LabeledImage } from '../labeled-controls/labeled-image';
+import { CodingModuleProps, ImageFileData } from '../../data-types';
+import { LabeledFileUpload, LabeledImage } from '../labeled-controls';
 
-// TODO: error handling, comments
+/** Module responsible for assignment's image contents coding tasks. */
 export const ImageCodingModule: React.FC<CodingModuleProps> = props => {
     const { distortionProbability } = props;
 
     const [imageFile, setImageFile] = React.useState<File>();
+    const [imageFileError, setImageFileError] = React.useState<string>();
     const [initialImageSource, setInitialImageSource] = React.useState<string>();
-    const [imageBinaryContents, setImageBinaryContents] = React.useState<{
-        header: Uint8Array;
-        binaryString: string;
-    }>();
+    const [imageBinaryContents, setImageBinaryContents] = React.useState<ImageFileData>();
 
+    // Trying to acquire image file data, which would include a binary content string.
     React.useEffect(() => {
         const getImageBinaryValue = async () => {
-            if (imageFile) setImageBinaryContents(await convertBlobToBinary(imageFile));
+            try {
+                if (!imageFile) return;
+                const imageData = await convertBlobToImageFileData(imageFile);
+                setImageBinaryContents(imageData);
+            } catch (error) {
+                if (error instanceof Error) setImageFileError(error.message);
+            }
         };
+
         getImageBinaryValue();
+        // Creating a URL for the image file to display it
         if (imageFile) setInitialImageSource(URL.createObjectURL(imageFile));
     }, [imageFile]);
 
+    // Processing non-coded content binary string, distorting it through the channel and converting it
+    // back to an image.
     const finalInsecureImage = React.useMemo(() => {
-        if (!imageBinaryContents || !imageFile) return;
+        if (!imageBinaryContents) return;
 
         const receivedBinaryValue = sendThroughChannel(imageBinaryContents.binaryString, distortionProbability);
-        const insecureBlob = convertBinaryToBlob(receivedBinaryValue, imageFile.type, imageBinaryContents.header);
+        const insecureBlob = convertImageFileDataToBlob({
+            ...imageBinaryContents,
+            binaryString: receivedBinaryValue,
+        });
         return URL.createObjectURL(insecureBlob);
-    }, [distortionProbability, imageBinaryContents, imageFile]);
+    }, [distortionProbability, imageBinaryContents]);
 
+    // Coding the content binary string and then processing it - distorting it through the channel and
+    // converting it back to an image.
     const finalSecureImage = React.useMemo(() => {
-        if (!imageBinaryContents || !imageFile) return;
+        if (!imageBinaryContents) return;
 
         const encodedBinaryValue = encode(imageBinaryContents.binaryString);
         const paddedCharactersCount = countPaddedCharacters(imageBinaryContents.binaryString);
@@ -50,13 +63,21 @@ export const ImageCodingModule: React.FC<CodingModuleProps> = props => {
             paddedCharactersCount,
         );
         const decodedBinaryValue = decode(receivedCodedBinaryValue);
-        const secureBlob = convertBinaryToBlob(decodedBinaryValue, imageFile.type, imageBinaryContents.header);
+        const secureBlob = convertImageFileDataToBlob({
+            ...imageBinaryContents,
+            binaryString: decodedBinaryValue,
+        });
         return URL.createObjectURL(secureBlob);
-    }, [distortionProbability, imageBinaryContents, imageFile]);
+    }, [distortionProbability, imageBinaryContents]);
 
     return (
         <>
-            <LabeledFileUpload id="initial-image" title="Upload an image" setValue={setImageFile} />
+            <LabeledFileUpload
+                id="initial-image"
+                title="Upload an image"
+                setValue={setImageFile}
+                errorMessage={imageFileError}
+            />
             <hr />
             <LabeledImage id="initial-image" title="Initial image" source={initialImageSource} />
             <Channel />

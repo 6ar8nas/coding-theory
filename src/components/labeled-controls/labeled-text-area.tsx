@@ -1,6 +1,6 @@
 import React from 'react';
-import './labeled-text-area.scss';
 import { Label } from './label';
+import './labeled-text-area.scss';
 
 export type LabeledTextAreaProps = {
     id: string;

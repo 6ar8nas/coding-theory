@@ -1,8 +1,7 @@
 import React from 'react';
-import './header.scss';
-import { ViewMode } from '../../data-types/view-mode';
-import { TabIdentifier } from '../../data-types/tab-identifier';
+import { ViewMode, TabIdentifier } from '../../data-types';
 import { Tab } from '../tab/tab';
+import './header.scss';
 
 export type HeaderProps = {
     activeViewMode: ViewMode;

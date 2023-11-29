@@ -1,16 +1,18 @@
 import { validateBinary } from '.';
+import { ImageFileData } from '../data-types';
 
 /** Converts an image file to a binary string and saves the initial Blob header data.
  * @param {Blob} image An image file to be converted to a binary string
  * @throws if the image type is unsupported.
  */
-export const convertBlobToBinary = async (image: Blob): Promise<{ binaryString: string; header: Uint8Array }> => {
+export const convertBlobToImageFileData = async (image: Blob): Promise<ImageFileData> => {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
 
         reader.onload = event => {
             if (event.target?.result) {
-                const dataArray = new Uint8Array(event.target.result as ArrayBuffer); // stores data as decimal values array.
+                // Store data as decimal values array.
+                const dataArray = new Uint8Array(event.target.result as ArrayBuffer);
 
                 switch (image.type) {
                     case 'image/bmp': {
@@ -30,7 +32,7 @@ export const convertBlobToBinary = async (image: Blob): Promise<{ binaryString: 
                         const binaryString = Array.from(content)
                             .map(byte => byte.toString(2).padStart(8, '0'))
                             .join('');
-                        resolve({ binaryString, header });
+                        resolve({ binaryString, header, mimeType: image.type });
                         break;
                     }
                     default: {
@@ -55,23 +57,24 @@ export const convertBlobToBinary = async (image: Blob): Promise<{ binaryString: 
  * @throws if the binaryString is a non-binary value.
  * @throws if the mimeType is unsupported.
  */
-export const convertBinaryToBlob = (binaryString: string, mimeType: string, header: Uint8Array): Blob => {
-    if (!validateBinary(binaryString)) throw new Error('Received an unexpected non-binary string.');
+export const convertImageFileDataToBlob = (imageData: ImageFileData): Blob => {
+    if (!validateBinary(imageData.binaryString)) throw new Error('Received an unexpected non-binary string.');
 
-    const binaryArray = binaryString.match(/.{1,8}/g) || []; // Split binary string into 8-bit substrings using RegEx.
+    // Split binary string into 8-bit substrings using RegEx.
+    const binaryArray = imageData.binaryString.match(/.{1,8}/g) || [];
 
     // Parsing each binary number to a decimal.
     const decimalValues = binaryArray.map(binarySubString => parseInt(binarySubString, 2));
 
     let bytesArray: Uint8Array;
-    switch (mimeType) {
+    switch (imageData.mimeType) {
         case 'image/bmp': {
-            bytesArray = new Uint8Array([...header, ...decimalValues]);
+            bytesArray = new Uint8Array([...imageData.header, ...decimalValues]);
             break;
         }
         default: {
             throw new Error('Only BMP images are currently supported.');
         }
     }
-    return new Blob([bytesArray], { type: mimeType });
+    return new Blob([bytesArray], { type: imageData.mimeType });
 };

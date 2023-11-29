@@ -1,12 +1,10 @@
 import React from 'react';
-import { ViewMode, defaultViewMode } from './data-types/view-mode';
 import { BinaryCodingModule, TextCodingModule, ImageCodingModule, ParametersModule } from './components/modules';
 import { Header } from './components/header/header';
-import { TabIdentifier } from './data-types/tab-identifier';
+import { ViewMode, defaultViewMode, TabIdentifier } from './data-types';
 import { defaultDistortionProbability } from './utils';
 
-/** Main component, allowing to switch between different application modules.
- */
+/** Main component, allowing to switch between different application modules. */
 export const App = (): React.JSX.Element => {
     const [activeViewMode, setActiveViewMode] = React.useState<ViewMode>(defaultViewMode);
     const [distortionProbability, setDistortionProbability] = React.useState(defaultDistortionProbability);
