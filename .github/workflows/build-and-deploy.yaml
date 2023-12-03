@@ -1,37 +1,64 @@
-name: Publish contents to GitHub pages.
+name: Build and deploy contents to Pages
 
 on:
     push:
         branches: ['main']
+    pull_request:
     workflow_dispatch:
 
 permissions:
     contents: write
 
-concurrency:
-    group: 'pages'
-    cancel-in-progress: true
-
 jobs:
-    build-and-deploy:
+    build:
+        name: Build
         runs-on: ubuntu-latest
 
         steps:
-            - name: Checkout
-              uses: actions/checkout@v4
+            - uses: actions/checkout@v4
+
+            - name: Setup pnpm
+              uses: pnpm/action-setup@v2
+              with:
+                  version: 8
 
             - name: Use Node 18.x
               uses: actions/setup-node@v3
               with:
                   node-version: 18
-                  cache: 'npm'
+                  cache: 'pnpm'
 
             - name: Install and build
               run: |
-                  npm install
-                  npm run build
+                  pnpm install
+                  pnpm lint
+                  pnpm build
 
-            - name: Host static page in gh-pages
+            - name: Upload deployment build files
+              uses: actions/upload-artifact@v3
+              with:
+                  name: deployment-files
+                  path: ./dist
+
+    deploy:
+        name: Deploy
+        needs: build
+        runs-on: ubuntu-latest
+        if: github.ref == 'refs/heads/main'
+        concurrency:
+            group: ${{ github.workflow }}-${{ github.ref }}
+            cancel-in-progress: true
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Download artifact
+              uses: actions/download-artifact@v3
+              with:
+                  name: deployment-files
+                  path: ./dist
+
+            - name: Host in GitHub Pages
               uses: JamesIves/github-pages-deploy-action@v4
               with:
                   branch: gh-pages
