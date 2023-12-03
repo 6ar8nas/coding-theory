@@ -1,20 +1,16 @@
 import React from 'react';
-import {
-    encode,
-    sendThroughChannel,
-    decode,
-    convertBinaryToText,
-    convertTextToBinary,
-    countPaddedCharacters,
-} from '../../utils';
+import { sendThroughChannel, convertBinaryToText, convertTextToBinary } from '../../utils';
 import { Channel } from '../channel/channel';
 import { CodingModuleProps } from '../../data-types';
 import { LabeledTextArea } from '../labeled-controls';
+import { GolayDecoder, GolayEncoder } from '../../coding';
 
-/** Module responsible for assignment's text string coding tasks. */
+/** Module responsible for assignment's text contents coding workflows. */
 export const TextCodingModule: React.FC<CodingModuleProps> = props => {
     const { distortionProbability } = props;
 
+    const encoder = React.useMemo(() => new GolayEncoder(), []);
+    const decoder = React.useMemo(() => new GolayDecoder(), []);
     const [initialValue, setInitialValue] = React.useState<string>('');
 
     // Converting the initial value to binary
@@ -30,16 +26,16 @@ export const TextCodingModule: React.FC<CodingModuleProps> = props => {
     // Coding the content binary string and then processing it - distorting it through the channel and
     // converting it back to a text string.
     const secureValue = React.useMemo(() => {
-        const encodedBinaryValue = encode(initialBinaryValue);
-        const paddedCharactersCount = countPaddedCharacters(initialBinaryValue);
+        const encodedBinaryValue = encoder.encode(initialBinaryValue);
+        const paddedCharactersCount = encoder.countPaddedCharacters(initialBinaryValue);
         const receivedCodedBinaryValue = sendThroughChannel(
             encodedBinaryValue,
             distortionProbability,
             paddedCharactersCount,
         );
-        const decodedBinaryValue = decode(receivedCodedBinaryValue);
+        const decodedBinaryValue = decoder.decode(receivedCodedBinaryValue);
         return convertBinaryToText(decodedBinaryValue);
-    }, [distortionProbability, initialBinaryValue]);
+    }, [decoder, distortionProbability, encoder, initialBinaryValue]);
 
     return (
         <>

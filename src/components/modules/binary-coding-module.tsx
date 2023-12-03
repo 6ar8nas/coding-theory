@@ -1,22 +1,17 @@
 import React from 'react';
-import {
-    encode,
-    sendThroughChannel,
-    decode,
-    validateBinary,
-    encodingCodeLength,
-    compareBinaryStringsExclusiveOr,
-    decodingCodeLength,
-} from '../../utils';
+import { sendThroughChannel, validateBinary, compareBinaryStringsExclusiveOr } from '../../utils';
 import { Channel } from '../channel/channel';
 import { CodingModuleProps } from '../../data-types';
 import { LabeledInput } from '../labeled-controls';
+import { GolayDecoder, GolayEncoder } from '../../coding';
 
-/** Module responsible for assignment's binary string coding tasks. */
+/** Module responsible for assignment's binary string coding workflows. */
 export const BinaryCodingModule: React.FC<CodingModuleProps> = props => {
     const { distortionProbability } = props;
     const nonBinaryErrorMessage = 'Input contained non-binary characters';
 
+    const encoder = React.useMemo(() => new GolayEncoder(), []);
+    const decoder = React.useMemo(() => new GolayDecoder(), []);
     const [initialValue, _setInitialValue] = React.useState<string>('');
     const [initialValueError, setInitialValueError] = React.useState<string>();
     const [receivedValue, _setReceivedValue] = React.useState<string>('');
@@ -28,8 +23,8 @@ export const BinaryCodingModule: React.FC<CodingModuleProps> = props => {
         _setInitialValue(value);
         if (value && !validateBinary(value)) {
             setInitialValueError(nonBinaryErrorMessage);
-        } else if (value && value.length % encodingCodeLength !== 0) {
-            setInitialValueError(`The input should consist of a multiple of ${encodingCodeLength} characters.`);
+        } else if (value && value.length % GolayEncoder.codeLength !== 0) {
+            setInitialValueError(`The input should consist of a multiple of ${GolayEncoder.codeLength} characters.`);
         } else setInitialValueError(undefined);
     };
 
@@ -38,42 +33,41 @@ export const BinaryCodingModule: React.FC<CodingModuleProps> = props => {
         _setReceivedValue(value);
         if (value && !validateBinary(value)) {
             setReceivedValueError(nonBinaryErrorMessage);
-        } else if (value && value.length % decodingCodeLength !== 0) {
-            setReceivedValueError(`The input should consist of a multiple of ${decodingCodeLength} characters.`);
+        } else if (value && value.length % GolayDecoder.codeLength !== 0) {
+            setReceivedValueError(`The input should consist of a multiple of ${GolayDecoder.codeLength} characters.`);
         } else setReceivedValueError(undefined);
     };
 
     // Encoding the initial value.
     const encodedValue = React.useMemo(() => {
-        if (!initialValue || initialValueError) return '';
-        return encode(initialValue);
-    }, [initialValue, initialValueError]);
+        if (initialValueError) return '';
+        return encoder.encode(initialValue);
+    }, [encoder, initialValue, initialValueError]);
 
     // Setting the channel output as the received value.
     React.useEffect(() => {
-        if (!encodedValue) return setReceivedValue('');
         setReceivedValue(sendThroughChannel(encodedValue, distortionProbability));
     }, [distortionProbability, encodedValue]);
 
     // Calculating the error vector between encoded and received values using binary XOR.
     const errorVector = React.useMemo(() => {
-        if (encodedValue.length !== receivedValue.length) {
-            setErrorVectorError('The length of the strings does not match.');
+        try {
+            const xorResult = compareBinaryStringsExclusiveOr(encodedValue, receivedValue);
+            setErrorVectorError(undefined);
+            return xorResult;
+        } catch (error) {
+            if (error instanceof Error) setErrorVectorError(error.message);
             return '';
         }
-        if (!encodedValue || !receivedValue) return '';
-
-        setErrorVectorError(undefined);
-        return compareBinaryStringsExclusiveOr(encodedValue, receivedValue);
         // encodedValue omitted as on each change, the receivedValue would always change with a small delay right after.
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [receivedValue, receivedValueError]);
+    }, [receivedValue]);
 
     // Decoding the received value.
     const decodedValue = React.useMemo(() => {
-        if (!receivedValue || receivedValueError) return '';
-        return decode(receivedValue);
-    }, [receivedValue, receivedValueError]);
+        if (receivedValueError) return '';
+        return decoder.decode(receivedValue);
+    }, [decoder, receivedValue, receivedValueError]);
 
     return (
         <>

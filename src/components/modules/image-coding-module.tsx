@@ -1,23 +1,18 @@
 import React from 'react';
-import {
-    encode,
-    sendThroughChannel,
-    decode,
-    convertBlobToImageFileData,
-    convertImageFileDataToBlob,
-    countPaddedCharacters,
-} from '../../utils';
+import { sendThroughChannel, convertBlobToImageFileData, convertImageFileDataToBlob } from '../../utils';
 import { Channel } from '../channel/channel';
 import { CodingModuleProps, ImageFileData } from '../../data-types';
 import { LabeledFileUpload, LabeledImage } from '../labeled-controls';
+import { GolayDecoder, GolayEncoder } from '../../coding';
 
-/** Module responsible for assignment's image contents coding tasks. */
+/** Module responsible for assignment's image contents coding workflows. */
 export const ImageCodingModule: React.FC<CodingModuleProps> = props => {
     const { distortionProbability } = props;
 
+    const encoder = React.useMemo(() => new GolayEncoder(), []);
+    const decoder = React.useMemo(() => new GolayDecoder(), []);
     const [imageFile, setImageFile] = React.useState<File>();
     const [imageFileError, setImageFileError] = React.useState<string>();
-    const [initialImageSource, setInitialImageSource] = React.useState<string>();
     const [imageBinaryContents, setImageBinaryContents] = React.useState<ImageFileData>();
 
     // Trying to acquire image file data, which would include a binary content string.
@@ -31,10 +26,12 @@ export const ImageCodingModule: React.FC<CodingModuleProps> = props => {
                 if (error instanceof Error) setImageFileError(error.message);
             }
         };
-
         getImageBinaryValue();
-        // Creating a URL for the image file to display it
-        if (imageFile) setInitialImageSource(URL.createObjectURL(imageFile));
+    }, [imageFile]);
+
+    // Creating a URL for the image file to display it
+    const initialImageSource = React.useMemo(() => {
+        if (imageFile) return URL.createObjectURL(imageFile);
     }, [imageFile]);
 
     // Processing non-coded content binary string, distorting it through the channel and converting it
@@ -55,20 +52,30 @@ export const ImageCodingModule: React.FC<CodingModuleProps> = props => {
     const finalSecureImage = React.useMemo(() => {
         if (!imageBinaryContents) return;
 
-        const encodedBinaryValue = encode(imageBinaryContents.binaryString);
-        const paddedCharactersCount = countPaddedCharacters(imageBinaryContents.binaryString);
+        const encodedBinaryValue = encoder.encode(imageBinaryContents.binaryString);
+        const paddedCharactersCount = encoder.countPaddedCharacters(imageBinaryContents.binaryString);
         const receivedCodedBinaryValue = sendThroughChannel(
             encodedBinaryValue,
             distortionProbability,
             paddedCharactersCount,
         );
-        const decodedBinaryValue = decode(receivedCodedBinaryValue);
+        const decodedBinaryValue = decoder.decode(receivedCodedBinaryValue);
         const secureBlob = convertImageFileDataToBlob({
             ...imageBinaryContents,
             binaryString: decodedBinaryValue,
         });
         return URL.createObjectURL(secureBlob);
-    }, [distortionProbability, imageBinaryContents]);
+    }, [decoder, distortionProbability, encoder, imageBinaryContents]);
+
+    // Cleaning up after URL object on unmount or file change.
+    React.useEffect(
+        () => () => {
+            if (initialImageSource) URL.revokeObjectURL(initialImageSource);
+            if (finalInsecureImage) URL.revokeObjectURL(finalInsecureImage);
+            if (finalSecureImage) URL.revokeObjectURL(finalSecureImage);
+        },
+        [initialImageSource, finalInsecureImage, finalSecureImage],
+    );
 
     return (
         <>
