@@ -1,4 +1,4 @@
-name: Build and deploy static content to Pages
+name: Build and deploy contents to Pages
 
 on:
     push:
@@ -46,7 +46,7 @@ jobs:
             - name: Download artifact
               uses: actions/download-artifact@v3
               with:
-                  name: production-files
+                  name: deployment-files
                   path: ./dist
 
             - name: Deploy to GitHub Pages
