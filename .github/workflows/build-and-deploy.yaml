@@ -49,7 +49,7 @@ jobs:
             cancel-in-progress: true
 
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
 
             - name: Download artifact
               uses: actions/download-artifact@v3
