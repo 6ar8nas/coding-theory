@@ -53,13 +53,10 @@ export const ImageCodingModule: React.FC<CodingModuleProps> = props => {
         if (!imageBinaryContents) return;
 
         const encodedBinaryValue = encoder.encode(imageBinaryContents.binaryString);
-        const paddedCharactersCount = encoder.countPaddedCharacters(imageBinaryContents.binaryString);
-        const receivedCodedBinaryValue = sendThroughChannel(
-            encodedBinaryValue,
-            distortionProbability,
-            paddedCharactersCount,
-        );
-        const decodedBinaryValue = decoder.decode(receivedCodedBinaryValue);
+        const receivedCodedBinaryValue = sendThroughChannel(encodedBinaryValue, distortionProbability);
+        const decodedBinaryValue = decoder
+            .decode(receivedCodedBinaryValue)
+            .substring(0, imageBinaryContents.binaryString.length);
         const secureBlob = convertImageFileDataToBlob({
             ...imageBinaryContents,
             binaryString: decodedBinaryValue,

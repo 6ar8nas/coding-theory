@@ -1,7 +1,7 @@
 import { validateBinary } from '.';
 
 /** Converts text to binary.
- * @param value Input UTF-8 string to be converted to a binary string.
+ * @param value Input UTF-16 string to be converted to a binary string.
  * @returns Binary string representation of the text input value.
  */
 export const convertTextToBinary = (value: string): string => {
@@ -12,23 +12,23 @@ export const convertTextToBinary = (value: string): string => {
                 char
                     .charCodeAt(0) // Return the unicode value of the character
                     .toString(2) // Convert the number to a binary string representation
-                    .padStart(8, '0'), // Prepend zeros till it has a length of 8.
+                    .padStart(16, '0'), // Prepend zeros till it has a length of 16.
         )
         .join('');
 };
 
 /** Converts binary to text.
- * @param value Input binary string to be converted to a UTF-8 string.
+ * @param value Input binary string to be converted to a UTF-16 string.
  * @throws if the value is an invalid binary string expression.
- * @returns UTF-8 string representation of the binary input value.
+ * @returns UTF-16 string representation of the binary input value.
  */
 export const convertBinaryToText = (value: string): string => {
     if (!validateBinary(value)) throw new Error('Received an unexpected non-binary string.');
 
-    const binaryArray = value.match(/.{1,8}/g) || []; // Split binary string into 8-bit substrings using RegEx.
+    const binaryArray = value.match(/.{1,16}/g) || []; // Split binary string into 16-bit substrings using RegEx.
     return (
         binaryArray
-            // Parse a binary number to decimal and match it to a UTF-8 character.
+            // Parse a binary number to decimal and match it to a UTF-16 character.
             .map(binarySubstring => String.fromCharCode(parseInt(binarySubstring, 2)))
             .join('')
     );

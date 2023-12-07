@@ -29,11 +29,4 @@ export class GolayEncoder extends GolayBase {
             })
             .join(''); // making a single string from the encoded substrings.
     };
-
-    /** Counts how many characters were padded during encoding to match Golay code C23 specifications.
-     * @param initialValue Binary value that was encoded.
-     * @returns Number of padded characters for the given value using this encoder.
-     */
-    public countPaddedCharacters = (initialValue: string): number =>
-        GolayEncoder.codeLength - (initialValue.length % GolayEncoder.codeLength);
 }

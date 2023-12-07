@@ -14,7 +14,10 @@ export const TextCodingModule: React.FC<CodingModuleProps> = props => {
     const [initialValue, setInitialValue] = React.useState<string>('');
 
     // Converting the initial value to binary
-    const initialBinaryValue = React.useMemo(() => convertTextToBinary(initialValue), [initialValue]);
+    const initialBinaryValue = React.useMemo(
+        () => (initialValue ? convertTextToBinary(initialValue) : ''),
+        [initialValue],
+    );
 
     // Processing non-coded content binary string, distorting it through the channel and converting it
     // back to a text string.
@@ -27,13 +30,8 @@ export const TextCodingModule: React.FC<CodingModuleProps> = props => {
     // converting it back to a text string.
     const secureValue = React.useMemo(() => {
         const encodedBinaryValue = encoder.encode(initialBinaryValue);
-        const paddedCharactersCount = encoder.countPaddedCharacters(initialBinaryValue);
-        const receivedCodedBinaryValue = sendThroughChannel(
-            encodedBinaryValue,
-            distortionProbability,
-            paddedCharactersCount,
-        );
-        const decodedBinaryValue = decoder.decode(receivedCodedBinaryValue);
+        const receivedCodedBinaryValue = sendThroughChannel(encodedBinaryValue, distortionProbability);
+        const decodedBinaryValue = decoder.decode(receivedCodedBinaryValue).substring(0, initialBinaryValue.length);
         return convertBinaryToText(decodedBinaryValue);
     }, [decoder, distortionProbability, encoder, initialBinaryValue]);
 
