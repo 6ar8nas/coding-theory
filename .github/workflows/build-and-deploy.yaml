@@ -2,67 +2,67 @@ name: Build and deploy contents to Pages
 
 on:
     push:
-        branches: ['main']
+        branches: [main]
     pull_request:
-    workflow_dispatch:
+        branches: [main]
 
 permissions:
     contents: write
 
 jobs:
     build:
-        name: Build
         runs-on: ubuntu-latest
-
         steps:
             - uses: actions/checkout@v4
 
-            - name: Setup pnpm
-              uses: pnpm/action-setup@v2
+            - name: Install pnpm
+              uses: pnpm/action-setup@v4
               with:
-                  version: 8
+                  version: 9
 
-            - name: Use Node 18.x
-              uses: actions/setup-node@v3
+            - name: Use Node.js 20.x
+              uses: actions/setup-node@v4
               with:
-                  node-version: 18
+                  node-version: 20
                   cache: 'pnpm'
 
-            - name: Install and build
-              run: |
-                  pnpm install
-                  pnpm lint
-                  pnpm build
+            - name: Install dependencies
+              run: pnpm install
 
-            - name: Upload deployment build files
-              uses: actions/upload-artifact@v3
+            - name: Run validation checks
+              run: |
+                  pnpm lint
+                  pnpm test
+
+            - name: Build
+              run: pnpm build
+
+            - name: Upload build files
+              uses: actions/upload-artifact@v4
               with:
-                  name: deployment-files
+                  name: app-build
                   path: ./dist
 
     deploy:
-        name: Deploy
         needs: build
         runs-on: ubuntu-latest
         if: github.ref == 'refs/heads/main'
         concurrency:
             group: ${{ github.workflow }}-${{ github.ref }}
             cancel-in-progress: true
-
         steps:
             - uses: actions/checkout@v4
 
-            - name: Download artifact
-              uses: actions/download-artifact@v3
+            - name: Download build files
+              uses: actions/download-artifact@v4
               with:
-                  name: deployment-files
+                  name: app-build
                   path: ./dist
 
-            - name: Host in GitHub Pages
+            - name: Host app in GitHub Pages
               uses: JamesIves/github-pages-deploy-action@v4
               with:
                   branch: gh-pages
                   folder: ${{ github.workspace }}/dist
-                  clean: true
                   git-config-name: github-actions[bot]
                   git-config-email: github-actions[bot]@users.noreply.github.com

@@ -1,9 +1,9 @@
 /** Validates whether a given string is a binary number.
  * @param value String to be validated.
- * @returns Whether the value is a binary number string.
+ * @returns True if the value is a binary number represented as a string, false otherwise.
  */
 export const validateBinary = (value: string): boolean => {
-    return /^[0-1]*$/.test(value); // Check the value against a RegEx pattern.
+    return /^[0-1]*$/.test(value);
 };
 
 /** Compares two binary strings to one another and returns a logical XOR result.

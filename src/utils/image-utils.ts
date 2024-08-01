@@ -71,10 +71,8 @@ export const convertBlobToImageFileData = async (image: Blob): Promise<ImageFile
 export const convertImageFileDataToBlob = (imageData: ImageFileData): Blob => {
     if (!validateBinary(imageData.binaryString)) throw new Error('Received an unexpected non-binary string.');
 
-    // Split binary string into 8-bit substrings using RegEx.
+    // Split binary string into 8-bit substrings.
     const binaryArray = imageData.binaryString.match(/.{1,8}/g) || [];
-
-    // Parse each binary number to a decimal.
     const decimalValues = binaryArray.map(binarySubString => parseInt(binarySubString, 2));
 
     let bytesArray: Uint8Array;

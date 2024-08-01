@@ -1,8 +1,5 @@
 import { validateBinary } from '.';
 
-/** Default distortion probability value for when a character goes through the channel. */
-export const defaultDistortionProbability = 0.05;
-
 /** Simulates sending data through a distortion channel.
  * @param value Channel input value in binary.
  * @param distortionProbability Probability for data being transmitted through the channel to be distorted.
