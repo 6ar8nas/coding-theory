@@ -1,3 +1,3 @@
-export * from './image-file-data.ts';
-export * from './tab-identifier.ts';
-export * from './view-mode.ts';
+export * from './image-file-data';
+export * from './tab-identifier';
+export * from './view-mode';

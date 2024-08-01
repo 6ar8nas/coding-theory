@@ -12,7 +12,7 @@ export const LabeledImage: React.FC<LabeledImageProps> = props => {
     const { id, title, source } = props;
 
     return (
-        <div className="coding-theory-labeled-image">
+        <div className="coding-theory-labeled-image" role="img" aria-label={title}>
             <Label id={id} title={title} />
             {source && <img id={id} src={source} />}
         </div>

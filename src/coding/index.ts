@@ -1,2 +1,2 @@
-export * from './golay-decoder.ts';
-export * from './golay-encoder.ts';
+export * from './golay-decoder';
+export * from './golay-encoder';

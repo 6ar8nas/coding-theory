@@ -9,14 +9,14 @@ export type LabeledTextAreaProps = {
     setValue?: (value: string) => void;
 } & Omit<
     React.DetailedHTMLProps<React.TextareaHTMLAttributes<HTMLTextAreaElement>, HTMLTextAreaElement>,
-    'onChange' | 'id' | 'value'
+    'onChange' | 'id' | 'value' | 'className'
 >;
 
 export const LabeledTextArea: React.FC<LabeledTextAreaProps> = props => {
     const { id, title, value, setValue, ...rest } = props;
 
     return (
-        <div className={`coding-theory-labeled-text-area ${props.className ?? ''}`} aria-description={id}>
+        <div className="coding-theory-labeled-text-area" aria-description={`Text area field for ${id}`}>
             <Label id={id} title={title} />
             <textarea
                 {...rest}

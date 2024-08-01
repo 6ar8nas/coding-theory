@@ -10,14 +10,14 @@ export type LabeledInputProps = {
     errorMessage?: string;
 } & Omit<
     React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>,
-    'onChange' | 'id' | 'value'
+    'onChange' | 'id' | 'value' | 'className'
 >;
 
 export const LabeledInput: React.FC<LabeledInputProps> = props => {
     const { id, title, value, setValue, errorMessage, ...rest } = props;
 
     return (
-        <div className={`coding-theory-labeled-input ${props.className ?? ''}`} aria-description={id}>
+        <div className="coding-theory-labeled-input" aria-description={`Input field for ${id}`}>
             <Label id={id} title={title} errorMessage={errorMessage} />
             <input
                 {...rest}

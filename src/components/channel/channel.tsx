@@ -4,8 +4,8 @@ import './channel.scss';
 
 export const Channel = (): React.JSX.Element => {
     return (
-        <div className="coding-theory-channel-img" aria-description="Channel">
-            <img src={channelUrl} alt="Channel" title="Channel" />
+        <div role="img" className="coding-theory-channel-img" aria-label="Binary data streaming channel illustration">
+            <img src={channelUrl} title="Channel" />
         </div>
     );
 };
