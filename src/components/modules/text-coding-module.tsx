@@ -1,33 +1,28 @@
 import React from 'react';
 import { sendThroughChannel, convertBinaryToText, convertTextToBinary } from '../../utils';
 import { Channel } from '../channel/channel';
-import { CodingModuleProps } from '../../data-types';
 import { LabeledTextArea } from '../labeled-controls';
 import { GolayDecoder, GolayEncoder } from '../../coding';
+import { useSettingsStore } from '../../state';
 
-/** Module responsible for assignment's text contents coding workflows. */
-export const TextCodingModule: React.FC<CodingModuleProps> = props => {
-    const { distortionProbability } = props;
+/** Module responsible for text contents coding workflows. */
+export const TextCodingModule: React.FunctionComponent = () => {
+    const { distortionProbability } = useSettingsStore();
 
     const encoder = React.useMemo(() => new GolayEncoder(), []);
     const decoder = React.useMemo(() => new GolayDecoder(), []);
     const [initialValue, setInitialValue] = React.useState<string>('');
 
-    // Converting the initial value to binary
     const initialBinaryValue = React.useMemo(
         () => (initialValue ? convertTextToBinary(initialValue) : ''),
         [initialValue],
     );
 
-    // Processing non-coded content binary string, distorting it through the channel and converting it
-    // back to a text string.
     const insecureValue = React.useMemo(() => {
         const receivedBinaryValue = sendThroughChannel(initialBinaryValue, distortionProbability);
         return convertBinaryToText(receivedBinaryValue);
     }, [distortionProbability, initialBinaryValue]);
 
-    // Coding the content binary string and then processing it - distorting it through the channel and
-    // converting it back to a text string.
     const secureValue = React.useMemo(() => {
         const encodedBinaryValue = encoder.encode(initialBinaryValue);
         const receivedCodedBinaryValue = sendThroughChannel(encodedBinaryValue, distortionProbability);
@@ -40,7 +35,7 @@ export const TextCodingModule: React.FC<CodingModuleProps> = props => {
             <LabeledTextArea
                 id="initial-value"
                 title="Initial data"
-                placeholder="Enter a desired text."
+                placeholder="Enter a text to be encoded."
                 value={initialValue}
                 setValue={setInitialValue}
             />

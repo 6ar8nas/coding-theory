@@ -1,13 +1,14 @@
 import React from 'react';
 import { sendThroughChannel, validateBinary, compareBinaryStringsExclusiveOr } from '../../utils';
 import { Channel } from '../channel/channel';
-import { CodingModuleProps } from '../../data-types';
 import { LabeledInput } from '../labeled-controls';
 import { GolayDecoder, GolayEncoder } from '../../coding';
+import { useSettingsStore } from '../../state';
 
-/** Module responsible for assignment's binary string coding workflows. */
-export const BinaryCodingModule: React.FC<CodingModuleProps> = props => {
-    const { distortionProbability } = props;
+/** Module responsible for binary string coding workflows. */
+export const BinaryCodingModule: React.FunctionComponent = () => {
+    const { distortionProbability } = useSettingsStore();
+
     const nonBinaryErrorMessage = 'Input contained non-binary characters';
 
     const encoder = React.useMemo(() => new GolayEncoder(), []);
@@ -18,7 +19,6 @@ export const BinaryCodingModule: React.FC<CodingModuleProps> = props => {
     const [receivedValueError, setReceivedValueError] = React.useState<string>();
     const [errorVectorError, setErrorVectorError] = React.useState<string>();
 
-    // A validating setter function for user initial value input.
     const setInitialValue = (value: string): void => {
         _setInitialValue(value);
         if (value && !validateBinary(value)) {
@@ -28,7 +28,6 @@ export const BinaryCodingModule: React.FC<CodingModuleProps> = props => {
         } else setInitialValueError(undefined);
     };
 
-    // A validating setter function for user received value input.
     const setReceivedValue = (value: string): void => {
         _setReceivedValue(value);
         if (value && !validateBinary(value)) {
@@ -38,18 +37,15 @@ export const BinaryCodingModule: React.FC<CodingModuleProps> = props => {
         } else setReceivedValueError(undefined);
     };
 
-    // Encoding the initial value.
     const encodedValue = React.useMemo(() => {
         if (initialValueError) return '';
         return encoder.encode(initialValue);
     }, [encoder, initialValue, initialValueError]);
 
-    // Setting the channel output as the received value.
     React.useEffect(() => {
         setReceivedValue(sendThroughChannel(encodedValue, distortionProbability));
     }, [distortionProbability, encodedValue]);
 
-    // Calculating the error vector between encoded and received values using binary XOR.
     const errorVector = React.useMemo(() => {
         try {
             const xorResult = compareBinaryStringsExclusiveOr(encodedValue, receivedValue);
@@ -63,7 +59,6 @@ export const BinaryCodingModule: React.FC<CodingModuleProps> = props => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [receivedValue]);
 
-    // Decoding the received value.
     const decodedValue = React.useMemo(() => {
         if (receivedValueError) return '';
         return decoder.decode(receivedValue);
@@ -75,7 +70,7 @@ export const BinaryCodingModule: React.FC<CodingModuleProps> = props => {
                 id="initial-value"
                 inputMode="numeric"
                 title="Initial data"
-                placeholder="Enter a binary number."
+                placeholder="Enter a binary number to be encoded."
                 value={initialValue}
                 setValue={setInitialValue}
                 errorMessage={initialValueError}
@@ -94,7 +89,7 @@ export const BinaryCodingModule: React.FC<CodingModuleProps> = props => {
                 id="received-value"
                 inputMode="numeric"
                 title="Received data"
-                placeholder="Data in this field can be manipulated."
+                placeholder="Data in this field can be manipulated to better test the decoding algorithm."
                 value={receivedValue}
                 setValue={setReceivedValue}
                 errorMessage={receivedValueError}

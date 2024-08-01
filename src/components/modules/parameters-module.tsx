@@ -1,19 +1,14 @@
 import React from 'react';
 import { LabeledInput } from '../labeled-controls';
-
-export type ParametersModuleProps = {
-    setDistortionProbability: (value: number) => void;
-    distortionProbability: number;
-};
+import { useSettingsStore } from '../../state';
 
 /** Module responsible for modifying of parameters, used in other modules. */
-export const ParametersModule: React.FC<ParametersModuleProps> = props => {
-    const { distortionProbability, setDistortionProbability } = props;
+export const ParametersModule: React.FunctionComponent = () => {
+    const { distortionProbability, setDistortionProbability } = useSettingsStore();
 
     const [displayValue, setDisplayValue] = React.useState<string>(distortionProbability.toString());
     const [errorMessage, setErrorMessage] = React.useState<string>();
 
-    // A validating setter function for distortion probability input.
     const onChange = React.useCallback(
         (value: string) => {
             setDisplayValue(value);
@@ -34,7 +29,7 @@ export const ParametersModule: React.FC<ParametersModuleProps> = props => {
         <LabeledInput
             id="distortion-param"
             inputMode="numeric"
-            title="Change channel distortion probability"
+            title="Change channel's distortion probability"
             placeholder="Enter a number between 0 and 1."
             value={displayValue}
             setValue={onChange}

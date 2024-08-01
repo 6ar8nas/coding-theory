@@ -1,13 +1,14 @@
 import React from 'react';
 import { sendThroughChannel, convertBlobToImageFileData, convertImageFileDataToBlob } from '../../utils';
 import { Channel } from '../channel/channel';
-import { CodingModuleProps, ImageFileData } from '../../data-types';
+import { ImageFileData } from '../../data-types';
 import { LabeledFileUpload, LabeledImage } from '../labeled-controls';
 import { GolayDecoder, GolayEncoder } from '../../coding';
+import { useSettingsStore } from '../../state';
 
-/** Module responsible for assignment's image contents coding workflows. */
-export const ImageCodingModule: React.FC<CodingModuleProps> = props => {
-    const { distortionProbability } = props;
+/** Module responsible for image contents coding workflows. */
+export const ImageCodingModule: React.FunctionComponent = () => {
+    const { distortionProbability } = useSettingsStore();
 
     const encoder = React.useMemo(() => new GolayEncoder(), []);
     const decoder = React.useMemo(() => new GolayDecoder(), []);
@@ -15,7 +16,6 @@ export const ImageCodingModule: React.FC<CodingModuleProps> = props => {
     const [imageFileError, setImageFileError] = React.useState<string>();
     const [imageBinaryContents, setImageBinaryContents] = React.useState<ImageFileData>();
 
-    // Trying to acquire image file data, which would include a binary content string.
     React.useEffect(() => {
         const getImageBinaryValue = async () => {
             try {
@@ -29,13 +29,10 @@ export const ImageCodingModule: React.FC<CodingModuleProps> = props => {
         getImageBinaryValue();
     }, [imageFile]);
 
-    // Creating a URL for the image file to display it
     const initialImageSource = React.useMemo(() => {
         if (imageFile) return URL.createObjectURL(imageFile);
     }, [imageFile]);
 
-    // Processing non-coded content binary string, distorting it through the channel and converting it
-    // back to an image.
     const finalInsecureImage = React.useMemo(() => {
         if (!imageBinaryContents) return;
 
@@ -47,8 +44,6 @@ export const ImageCodingModule: React.FC<CodingModuleProps> = props => {
         return URL.createObjectURL(insecureBlob);
     }, [distortionProbability, imageBinaryContents]);
 
-    // Coding the content binary string and then processing it - distorting it through the channel and
-    // converting it back to an image.
     const finalSecureImage = React.useMemo(() => {
         if (!imageBinaryContents) return;
 
