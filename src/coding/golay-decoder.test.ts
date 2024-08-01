@@ -4,7 +4,6 @@ import { GolayEncoder } from './golay-encoder';
 
 describe(GolayDecoder.name, () => {
     const decoder = new GolayDecoder();
-    const encoder = new GolayEncoder();
 
     it.each([
         { vec: '10111110111101001001001', expected: '001111101110' }, // vec = w0, wt(s) <= 3 for s
@@ -16,22 +15,6 @@ describe(GolayDecoder.name, () => {
 
         expect(decodedValue).to.have.length(12);
         expect(decodedValue).to.equal(expected);
-    });
-
-    it.each([
-        '10101',
-        '000011000110',
-        '1010111010101011101011',
-        '101011101010',
-        '111011110111010111101011',
-        '000000000000000000000000000',
-        '1111111111111111',
-    ])('decodes recently encoded vector %s | dog food', (vector: string) => {
-        const encodedValue = encoder.encode(vector);
-
-        const decodedValue = decoder.decode(encodedValue);
-
-        expect(decodedValue.substring(0, vector.length)).to.equal(vector);
     });
 
     it('throws if the input value is not a binary string', () => {
@@ -46,5 +29,25 @@ describe(GolayDecoder.name, () => {
             Error,
             'Binary string length must be a multiple of the Golay code length.',
         );
+    });
+
+    describe('Dogfooding', () => {
+        const encoder = new GolayEncoder();
+
+        it.each([
+            '10101',
+            '000011000110',
+            '1010111010101011101011',
+            '101011101010',
+            '111011110111010111101011',
+            '000000000000000000000000000',
+            '1111111111111111',
+        ])('decodes recently encoded vector %s', (vector: string) => {
+            const encodedValue = encoder.encode(vector);
+
+            const decodedValue = decoder.decode(encodedValue);
+
+            expect(decodedValue.substring(0, vector.length)).to.equal(vector);
+        });
     });
 });
