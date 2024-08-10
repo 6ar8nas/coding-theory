@@ -1,27 +1,40 @@
-# React + TypeScript + Vite
+# Golay code C23
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This front-end web application allows the user to encode and decode data using the binary Golay code (length 23) algorithm and compare the code's effectiveness to raw inputs, when communicating through a noisy channel.
 
-Currently, two official plugins are available:
+Available input modes:
 
--   [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
--   [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+-   binary
+-   text<sup>\*</sup>
+-   images (only `.bmp` currently supported)<sup>\*</sup>
 
-## Expanding the ESLint configuration
+> <sup>\*</sup> - the encoding algorithm appends binary 0 characters to create a string of 12-multiple length. Due to the nature of the algorithm, it is available to safely remove those appended characters after decoding without losing any data.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Motivation
 
--   Configure the top-level `parserOptions` property like this:
+This is a university assignment for the Coding Theory course, lectured by Gintaras Skersys at Vilnius University. The assignment revolved around researching the designated coding algorithm, implementing it and assessing the code's error correction efficiency and characteristics.
 
-```js
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
-```
+## Technologies
 
--   Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
--   Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
--   Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+The application is created using [`React`](https://react.dev) and [`TypeScript`](https://www.typescriptlang.org), built and bundled using [`Vite`](https://vitejs.dev) tooling and utilizes [`pnpm`](https://pnpm.io) as a package manager.
+
+## Try it out
+
+The static site is published using [`github-pages`](https://pages.github.com). It can be accessed at [6ar8nas.github.io/coding-theory/](6ar8nas.github.io/coding-theory/).
+
+## Running the application locally
+
+### Prerequisites
+
+-   [node 20.x](https://nodejs.org/dist/) or higher.
+-   [pnpm 9.x](https://pnpm.io/installation) or higher.
+
+### Development
+
+1. Run `pnpm install` to install all packages.
+1. Run `pnpm dev` to start the web server in development mode with hot reload.
+1. Follow instructions in the console to open the application in the browser.
+
+## References
+
+-   R.Hill. A first course in coding theory. Oxford University Press, New York, 1991: §3.5–3.7, p. 82–89.
