@@ -43,11 +43,8 @@ export const convertBlobToImageFileData = async (image: Blob): Promise<ImageFile
                     }
                     default: {
                         reject(
-                            new Error(
-                                `Only ${Object.keys(SupportedImageFileFormat).join(
-                                    ', ',
-                                )} images are currently supported.`,
-                            ),
+                            new Error(`Only ${Object.keys(SupportedImageFileFormat).join(', ')} images 
+                                are currently supported.`),
                         );
                         return;
                     }
