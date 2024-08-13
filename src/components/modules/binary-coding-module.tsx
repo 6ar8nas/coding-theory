@@ -1,4 +1,5 @@
 import React from 'react';
+import { Channel } from '../channel/channel';
 import { sendThroughChannel, validateBinary, compareBinaryStringsExclusiveOr } from '../../utils';
 import { LabeledInput } from '../labeled-controls';
 import { GolayDecoder, GolayEncoder } from '../../coding';
