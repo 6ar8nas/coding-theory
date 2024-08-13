@@ -1,6 +1,6 @@
 import React from 'react';
 import { BinaryCodingModule, TextCodingModule, ImageCodingModule, ParametersModule } from './components/modules';
-import { Header } from './components/header/header';
+import { Header } from './components/header';
 import { ViewMode, defaultViewMode, TabIdentifier } from './data-types';
 
 const tabs: TabIdentifier[] = [

@@ -9,8 +9,8 @@ export const validateBinary = (value: string): boolean => {
 /** Compares two binary strings to one another and returns a logical XOR result.
  * @param valueA Binary string value to be compared to another.
  * @param valueB Binary string value to be compared to another.
- * @throws if the parameters are non-binary strings.
- * @throws if the parameters are of non-matching lengths.
+ * @throws if the arguments are non-binary strings.
+ * @throws if the arguments are of non-matching lengths.
  * @returns Logical XOR result of the two binary strings.
  */
 export const compareBinaryStringsExclusiveOr = (valueA: string, valueB: string): string => {

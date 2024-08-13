@@ -1,18 +1,16 @@
 import React from 'react';
 import { sendThroughChannel, validateBinary, compareBinaryStringsExclusiveOr } from '../../utils';
-import { Channel } from '../channel/channel';
 import { LabeledInput } from '../labeled-controls';
 import { GolayDecoder, GolayEncoder } from '../../coding';
-import { useSettingsStore } from '../../state';
+import { useSettingsStore, useCodecStore } from '../../state';
 
 /** Module responsible for binary string coding workflows. */
 export const BinaryCodingModule: React.FunctionComponent = () => {
     const { distortionProbability } = useSettingsStore();
+    const { encodeBinaryString: encode, decodeBinaryString: decode } = useCodecStore();
 
     const nonBinaryErrorMessage = 'Input contained non-binary characters';
 
-    const encoder = React.useMemo(() => new GolayEncoder(), []);
-    const decoder = React.useMemo(() => new GolayDecoder(), []);
     const [initialValue, _setInitialValue] = React.useState<string>('');
     const [initialValueError, setInitialValueError] = React.useState<string>();
     const [receivedValue, _setReceivedValue] = React.useState<string>('');
@@ -39,8 +37,8 @@ export const BinaryCodingModule: React.FunctionComponent = () => {
 
     const encodedValue = React.useMemo(() => {
         if (initialValueError) return '';
-        return encoder.encode(initialValue);
-    }, [encoder, initialValue, initialValueError]);
+        return encode(initialValue);
+    }, [encode, initialValue, initialValueError]);
 
     React.useEffect(() => {
         setReceivedValue(sendThroughChannel(encodedValue, distortionProbability));
@@ -61,8 +59,8 @@ export const BinaryCodingModule: React.FunctionComponent = () => {
 
     const decodedValue = React.useMemo(() => {
         if (receivedValueError) return '';
-        return decoder.decode(receivedValue);
-    }, [decoder, receivedValue, receivedValueError]);
+        return decode(receivedValue);
+    }, [decode, receivedValue, receivedValueError]);
 
     return (
         <>

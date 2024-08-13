@@ -3,15 +3,13 @@ import { sendThroughChannel, convertBlobToImageFileData, convertImageFileDataToB
 import { Channel } from '../channel/channel';
 import { ImageFileData } from '../../data-types';
 import { LabeledFileUpload, LabeledImage } from '../labeled-controls';
-import { GolayDecoder, GolayEncoder } from '../../coding';
-import { useSettingsStore } from '../../state';
+import { useSettingsStore, useCodecStore } from '../../state';
 
 /** Module responsible for image contents coding workflows. */
 export const ImageCodingModule: React.FunctionComponent = () => {
     const { distortionProbability } = useSettingsStore();
+    const { encodeBinaryString: encode, decodeBinaryString: decode } = useCodecStore();
 
-    const encoder = React.useMemo(() => new GolayEncoder(), []);
-    const decoder = React.useMemo(() => new GolayDecoder(), []);
     const [imageFile, setImageFile] = React.useState<File>();
     const [imageFileError, setImageFileError] = React.useState<string>();
     const [imageBinaryContents, setImageBinaryContents] = React.useState<ImageFileData>();
@@ -44,20 +42,26 @@ export const ImageCodingModule: React.FunctionComponent = () => {
         return URL.createObjectURL(insecureBlob);
     }, [distortionProbability, imageBinaryContents]);
 
-    const finalSecureImage = React.useMemo(() => {
+    // Encoding each image contents only once, optimizing for distortion probability changes
+    const encodedBinaryValue = React.useMemo(() => {
         if (!imageBinaryContents) return;
+        return encode(imageBinaryContents.binaryString);
+    }, [encode, imageBinaryContents]);
 
-        const encodedBinaryValue = encoder.encode(imageBinaryContents.binaryString);
+    const finalSecureImage = React.useMemo(() => {
+        if (!encodedBinaryValue || !imageBinaryContents) return;
+
         const receivedCodedBinaryValue = sendThroughChannel(encodedBinaryValue, distortionProbability);
-        const decodedBinaryValue = decoder
-            .decode(receivedCodedBinaryValue)
-            .substring(0, imageBinaryContents.binaryString.length);
+        const decodedBinaryValue = decode(receivedCodedBinaryValue).substring(
+            0,
+            imageBinaryContents.binaryString.length,
+        );
         const secureBlob = convertImageFileDataToBlob({
             ...imageBinaryContents,
             binaryString: decodedBinaryValue,
         });
         return URL.createObjectURL(secureBlob);
-    }, [decoder, distortionProbability, encoder, imageBinaryContents]);
+    }, [decode, distortionProbability, imageBinaryContents, encodedBinaryValue]);
 
     // Cleaning up after URL object on unmount or file change.
     React.useEffect(
