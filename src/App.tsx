@@ -1,5 +1,5 @@
 import React from 'react';
-import { BinaryCodingModule, TextCodingModule, ImageCodingModule } from './components/view-panels';
+import { BinaryCodingModule, TextCodingModule, ImageCodingModule } from './components/views';
 import { Header } from './components/header';
 import { ViewMode, defaultViewMode, TabIdentifier } from './types';
 
@@ -34,7 +34,7 @@ export const App: React.FunctionComponent = () => {
                         type="radio"
                         name="viewmode-tab"
                         role="tab"
-                        className="tab"
+                        className="tab text-base"
                         aria-label={x.title}
                         onClick={() => setActiveViewMode(x.name)}
                         defaultChecked={defaultViewMode === x.name}

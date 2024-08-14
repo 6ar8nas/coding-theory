@@ -15,8 +15,11 @@ export const LabeledInput: React.FC<LabeledInputProps> = props => {
             <input
                 id={id}
                 type="text"
-                className={`input input-bordered ${errorMessage ? 'input-error' : ''} ${className}`}
+                className={`input input-bordered text-base ${errorMessage ? 'input-error' : ''} ${className ?? ''}`}
                 onChange={x => setValue?.(x.target.value)}
+                onFocus={e =>
+                    e.currentTarget.setSelectionRange(e.currentTarget.value.length, e.currentTarget.value.length)
+                }
                 {...rest}
             />
         </div>

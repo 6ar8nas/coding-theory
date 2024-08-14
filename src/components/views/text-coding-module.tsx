@@ -35,7 +35,7 @@ export const TextCodingModule: React.FunctionComponent = () => {
         <>
             <LabeledTextArea
                 id="initial-value"
-                className="textarea-bordered h-24"
+                className="h-24"
                 title="Initial data"
                 placeholder="Enter a text to be encoded."
                 value={initialValue}
@@ -43,18 +43,12 @@ export const TextCodingModule: React.FunctionComponent = () => {
             />
             <LabeledTextArea
                 id="non-coded-data"
-                className="textarea-bordered h-24"
+                className="h-24"
                 title="Non-coded text"
                 value={insecureValue}
                 readOnly
             />
-            <LabeledTextArea
-                id="secure-data"
-                className="textarea-bordered h-24"
-                title="Coded text"
-                value={secureValue}
-                readOnly
-            />
+            <LabeledTextArea id="secure-data" className="h-24" title="Coded text" value={secureValue} readOnly />
         </>
     );
 };

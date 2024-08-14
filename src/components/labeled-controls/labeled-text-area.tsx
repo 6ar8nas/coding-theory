@@ -14,8 +14,11 @@ export const LabeledTextArea: React.FC<LabeledTextAreaProps> = props => {
             <Label htmlFor={id} title={title} errorMessage={errorMessage} />
             <textarea
                 id={id}
-                className={`textarea ${errorMessage ? 'textarea-error' : ''} ${className}`}
+                className={`textarea textarea-bordered text-base ${errorMessage ? 'textarea-error' : ''} ${className ?? ''}`}
                 onChange={x => setValue?.(x.target.value)}
+                onFocus={e =>
+                    e.currentTarget.setSelectionRange(e.currentTarget.value.length, e.currentTarget.value.length)
+                }
                 {...rest}
             />
         </div>

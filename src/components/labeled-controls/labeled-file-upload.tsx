@@ -15,7 +15,7 @@ export const LabeledFileUpload: React.FC<LabeledFileUploadProps> = props => {
             <input
                 id={id}
                 type="file"
-                className={`file-input ${errorMessage ? 'file-input-error' : ''} ${className}`}
+                className={`file-input ${errorMessage ? 'file-input-error' : ''} ${className ?? ''}`}
                 onChange={x => setValue?.(x.target.files?.[0])}
                 {...rest}
             />

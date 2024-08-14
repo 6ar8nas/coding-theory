@@ -8,12 +8,12 @@ export const Header: React.FunctionComponent = () => {
         <>
             <nav className="navbar bg-base-100">
                 <div className="navbar-start">
-                    <title className="btn btn-ghost text-xl">Golay&apos;s C23 playground</title>
+                    <title className="btn btn-ghost text-2xl">Golay&apos;s C23 playground</title>
                 </div>
                 <div className="navbar-end">
                     <ul className="menu menu-horizontal p-0">
                         <li>
-                            <button className="btn btn-ghost text-md" onClick={() => paramModal.current!.showModal()}>
+                            <button className="btn btn-ghost text-base" onClick={() => paramModal.current!.showModal()}>
                                 Parameters
                             </button>
                         </li>

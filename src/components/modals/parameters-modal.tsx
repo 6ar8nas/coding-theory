@@ -32,6 +32,10 @@ export const ParametersModal: React.FC<ParametersModalProps> = props => {
 
     return (
         <dialog id="param-modal" className="modal modal-bottom sm:modal-middle" ref={dialogRef}>
+            {/* Backdrop is here first to trap focus away from the first input. */}
+            <form method="dialog" className="modal-backdrop">
+                <button>Close</button>
+            </form>
             <div className="modal-box pt-3">
                 <LabeledInput
                     id="distortion-param"
@@ -43,9 +47,6 @@ export const ParametersModal: React.FC<ParametersModalProps> = props => {
                     errorMessage={errorMessage}
                 />
             </div>
-            <form method="dialog" className="modal-backdrop">
-                <button>Close</button>
-            </form>
         </dialog>
     );
 };

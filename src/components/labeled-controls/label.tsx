@@ -11,7 +11,7 @@ export const Label: React.FC<LabelProps> = props => {
 
     return (
         <label className="label" htmlFor={htmlFor}>
-            <span className="label-text">{title}</span>
+            <span className="label-text text-base">{title}</span>
             {errorMessage && <span className="label-text-alt text-error">{errorMessage}</span>}
         </label>
     );
