@@ -7,7 +7,9 @@ on:
         branches: [main]
 
 permissions:
-    contents: write
+    contents: read
+    pages: write
+    id-token: write
 
 jobs:
     build:
@@ -35,7 +37,7 @@ jobs:
                   pnpm test
 
             - name: Build
-              run: pnpm build
+              run: pnpm build --base=/coding-theory
 
             - name: Upload build files
               uses: actions/upload-artifact@v4
@@ -48,7 +50,7 @@ jobs:
         runs-on: ubuntu-latest
         if: github.ref == 'refs/heads/main'
         concurrency:
-            group: ${{ github.workflow }}-${{ github.ref }}
+            group: 'pages'
             cancel-in-progress: true
         steps:
             - uses: actions/checkout@v4
@@ -57,9 +59,13 @@ jobs:
               uses: actions/download-artifact@v4
               with:
                   name: app-build
-                  path: ./dist
+                  path: ./build
 
-            - name: Host app in GitHub Pages
-              uses: JamesIves/github-pages-deploy-action@v4
+            - name: Upload artifact
+              uses: actions/upload-pages-artifact@v3
               with:
-                  folder: dist
+                  path: './build'
+
+            - name: Deploy to GitHub Pages
+              id: deployment
+              uses: actions/deploy-pages@v4
