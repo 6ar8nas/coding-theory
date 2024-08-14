@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { GolayDecoder, GolayEncoder } from '../coding';
+import { GolayDecoder, GolayEncoder } from '../codec';
 
 const encoder = new GolayEncoder();
 const decoder = new GolayDecoder();

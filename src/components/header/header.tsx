@@ -1,32 +1,26 @@
 import React from 'react';
-import { ViewMode, TabIdentifier } from '../../data-types';
-import { Tab } from '../tab/tab';
-import './header.scss';
+import { ParametersModal } from '../modals';
 
-export type HeaderProps = {
-    activeViewMode: ViewMode;
-    setActiveViewMode: (viewMode: ViewMode) => void;
-    tabs: TabIdentifier[];
-};
-
-export const Header: React.FC<HeaderProps> = props => {
-    const { activeViewMode, setActiveViewMode, tabs } = props;
+export const Header: React.FunctionComponent = () => {
+    const paramModal = React.useRef<HTMLDialogElement>(null);
 
     return (
-        <header className="coding-theory-header">
-            <nav>
-                {tabs.map(x => (
-                    <Tab
-                        key={x.name}
-                        onSelect={() => setActiveViewMode(x.name)}
-                        title={x.title}
-                        isActive={activeViewMode === x.name}
-                    />
-                ))}
+        <>
+            <nav className="navbar bg-base-100">
+                <div className="navbar-start">
+                    <title className="btn btn-ghost text-xl">Golay&apos;s C23 playground</title>
+                </div>
+                <div className="navbar-end">
+                    <ul className="menu menu-horizontal p-0">
+                        <li>
+                            <button className="btn btn-ghost text-md" onClick={() => paramModal.current!.showModal()}>
+                                Parameters
+                            </button>
+                        </li>
+                    </ul>
+                </div>
             </nav>
-            <address rel="author" className="coding-theory-author">
-                Šarūnas Griškus | Coding theory | Golay C23
-            </address>
-        </header>
+            <ParametersModal dialogRef={paramModal} />
+        </>
     );
 };

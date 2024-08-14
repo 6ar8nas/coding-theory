@@ -2,8 +2,13 @@ import React from 'react';
 import { LabeledInput } from '../labeled-controls';
 import { useSettingsStore } from '../../state';
 
-/** Module responsible for modifying of parameters, used in other modules. */
-export const ParametersModule: React.FunctionComponent = () => {
+export type ParametersModalProps = {
+    dialogRef: React.Ref<HTMLDialogElement>;
+};
+
+/** Modal window responsible for changing parameter values, used in different app view panels. */
+export const ParametersModal: React.FC<ParametersModalProps> = props => {
+    const { dialogRef } = props;
     const { distortionProbability, setDistortionProbability } = useSettingsStore();
 
     const [displayValue, setDisplayValue] = React.useState<string>(distortionProbability.toString());
@@ -26,14 +31,21 @@ export const ParametersModule: React.FunctionComponent = () => {
     );
 
     return (
-        <LabeledInput
-            id="distortion-param"
-            inputMode="numeric"
-            title="Change channel's distortion probability"
-            placeholder="Enter a number between 0 and 1."
-            value={displayValue}
-            setValue={onChange}
-            errorMessage={errorMessage}
-        />
+        <dialog id="param-modal" className="modal modal-bottom sm:modal-middle" ref={dialogRef}>
+            <div className="modal-box pt-3">
+                <LabeledInput
+                    id="distortion-param"
+                    inputMode="numeric"
+                    title="Change channel's distortion probability"
+                    placeholder="Enter a number between 0 and 1."
+                    value={displayValue}
+                    setValue={onChange}
+                    errorMessage={errorMessage}
+                />
+            </div>
+            <form method="dialog" className="modal-backdrop">
+                <button>Close</button>
+            </form>
+        </dialog>
     );
 };

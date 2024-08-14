@@ -1,29 +1,22 @@
 import React from 'react';
 import { Label } from './label';
-import './labeled-text-area.scss';
 
 export type LabeledTextAreaProps = {
-    id: string;
-    title: string;
-    value: string;
     setValue?: (value: string) => void;
-} & Omit<
-    React.DetailedHTMLProps<React.TextareaHTMLAttributes<HTMLTextAreaElement>, HTMLTextAreaElement>,
-    'onChange' | 'id' | 'value' | 'className'
->;
+    errorMessage?: string;
+} & Omit<React.DetailedHTMLProps<React.TextareaHTMLAttributes<HTMLTextAreaElement>, HTMLTextAreaElement>, 'onChange'>;
 
 export const LabeledTextArea: React.FC<LabeledTextAreaProps> = props => {
-    const { id, title, value, setValue, ...rest } = props;
+    const { id, title, setValue, className, errorMessage, ...rest } = props;
 
     return (
-        <div className="coding-theory-labeled-text-area" aria-description={`Text area field for ${id}`}>
-            <Label id={id} title={title} />
+        <div className="form-control">
+            <Label htmlFor={id} title={title} errorMessage={errorMessage} />
             <textarea
-                {...rest}
                 id={id}
-                className="coding-theory-text-area"
-                value={value}
+                className={`textarea ${errorMessage ? 'textarea-error' : ''} ${className}`}
                 onChange={x => setValue?.(x.target.value)}
+                {...rest}
             />
         </div>
     );

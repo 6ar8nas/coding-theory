@@ -1,30 +1,23 @@
 import React from 'react';
 import { Label } from './label';
-import './labeled-input.scss';
 
 export type LabeledInputProps = {
-    id: string;
-    title: string;
-    value: string;
     setValue?: (value: string) => void;
     errorMessage?: string;
-} & Omit<
-    React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>,
-    'onChange' | 'id' | 'value' | 'className'
->;
+} & Omit<React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>, 'onChange'>;
 
 export const LabeledInput: React.FC<LabeledInputProps> = props => {
-    const { id, title, value, setValue, errorMessage, ...rest } = props;
+    const { id, title, setValue, className, errorMessage, ...rest } = props;
 
     return (
-        <div className="coding-theory-labeled-input" aria-description={`Input field for ${id}`}>
-            <Label id={id} title={title} errorMessage={errorMessage} />
+        <div className="form-control">
+            <Label htmlFor={id} title={title} errorMessage={errorMessage} />
             <input
-                {...rest}
                 id={id}
-                className="coding-theory-input"
-                value={value}
+                type="text"
+                className={`input input-bordered ${errorMessage ? 'input-error' : ''} ${className}`}
                 onChange={x => setValue?.(x.target.value)}
+                {...rest}
             />
         </div>
     );

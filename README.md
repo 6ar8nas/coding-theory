@@ -16,7 +16,7 @@ This is a university assignment for the Coding Theory course, lectured by Gintar
 
 ## Technologies
 
-The application is created using [`React`](https://react.dev) and [`TypeScript`](https://www.typescriptlang.org), built and bundled using [`Vite`](https://vitejs.dev) tooling and utilizes [`pnpm`](https://pnpm.io) as a package manager.
+The application is created using [`React`](https://react.dev), [`TypeScript`](https://www.typescriptlang.org) and [`daisyUI`](https://daisyui.com) as a component library, built and bundled using [`Vite`](https://vitejs.dev) tooling and utilizes [`pnpm`](https://pnpm.io) as a package manager.
 
 ## Try it out
 

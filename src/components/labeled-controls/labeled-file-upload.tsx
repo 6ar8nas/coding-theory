@@ -1,29 +1,23 @@
 import React from 'react';
 import { Label } from './label';
-import './labeled-file-upload.scss';
 
 export type LabeledFileUploadProps = {
-    id: string;
-    title: string;
     setValue: (file: File | undefined) => void;
     errorMessage?: string;
-} & Omit<
-    React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>,
-    'onChange' | 'id' | 'value' | 'type' | 'className'
->;
+} & Omit<React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>, 'onChange' | 'type'>;
 
 export const LabeledFileUpload: React.FC<LabeledFileUploadProps> = props => {
-    const { id, title, setValue, errorMessage, ...rest } = props;
+    const { id, title, setValue, className, errorMessage, ...rest } = props;
 
     return (
-        <div className="coding-theory-labeled-file-upload" aria-description={`File upload container for ${id}`}>
-            <Label id={id} title={title} errorMessage={errorMessage} />
+        <div className="form-control">
+            <Label htmlFor={id} title={title} errorMessage={errorMessage} />
             <input
-                {...rest}
                 id={id}
-                className="coding-theory-input"
                 type="file"
+                className={`file-input ${errorMessage ? 'file-input-error' : ''} ${className}`}
                 onChange={x => setValue?.(x.target.files?.[0])}
+                {...rest}
             />
         </div>
     );

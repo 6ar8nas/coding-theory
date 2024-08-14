@@ -1,20 +1,17 @@
 import React from 'react';
 import { Label } from './label';
-import './labeled-image.scss';
 
-export type LabeledImageProps = {
-    id: string;
-    title: string;
-    source?: string;
-};
+export type LabeledImageProps = React.DetailedHTMLProps<React.ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>;
 
 export const LabeledImage: React.FC<LabeledImageProps> = props => {
-    const { id, title, source } = props;
+    const { id, title, src, ...rest } = props;
 
     return (
-        <div className="coding-theory-labeled-image" role="img" aria-label={title}>
-            <Label id={id} title={title} />
-            {source && <img id={id} src={source} />}
+        <div className="form-control">
+            <Label htmlFor={id} title={title} />
+            <div role="img" aria-label={title}>
+                <img id={id} src={src} {...rest} />
+            </div>
         </div>
     );
 };

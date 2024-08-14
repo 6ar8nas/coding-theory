@@ -1,11 +1,10 @@
 import React from 'react';
-import { Channel } from '../channel/channel';
 import { sendThroughChannel, validateBinary, compareBinaryStringsExclusiveOr } from '../../utils';
 import { LabeledInput } from '../labeled-controls';
-import { GolayDecoder, GolayEncoder } from '../../coding';
+import { GolayDecoder, GolayEncoder } from '../../codec';
 import { useSettingsStore, useCodecStore } from '../../state';
 
-/** Module responsible for binary string coding workflows. */
+/** View panel responsible for binary string coding workflows. */
 export const BinaryCodingModule: React.FunctionComponent = () => {
     const { distortionProbability } = useSettingsStore();
     const { encodeBinaryString: encode, decodeBinaryString: decode } = useCodecStore();
@@ -67,6 +66,7 @@ export const BinaryCodingModule: React.FunctionComponent = () => {
         <>
             <LabeledInput
                 id="initial-value"
+                className="w-full input-md"
                 inputMode="numeric"
                 title="Initial data"
                 placeholder="Enter a binary number to be encoded."
@@ -74,10 +74,17 @@ export const BinaryCodingModule: React.FunctionComponent = () => {
                 setValue={setInitialValue}
                 errorMessage={initialValueError}
             />
-            <LabeledInput id="encoded-value" inputMode="numeric" title="Encoded data" value={encodedValue} readOnly />
-            <Channel />
+            <LabeledInput
+                id="encoded-value"
+                className="w-full input-md"
+                inputMode="numeric"
+                title="Encoded data"
+                value={encodedValue}
+                readOnly
+            />
             <LabeledInput
                 id="error-vector"
+                className="w-full input-md"
                 inputMode="numeric"
                 title="Error vector"
                 value={errorVector}
@@ -86,6 +93,7 @@ export const BinaryCodingModule: React.FunctionComponent = () => {
             />
             <LabeledInput
                 id="received-value"
+                className="w-full input-md"
                 inputMode="numeric"
                 title="Received data"
                 placeholder="Data in this field can be manipulated to better test the decoding algorithm."
@@ -93,7 +101,14 @@ export const BinaryCodingModule: React.FunctionComponent = () => {
                 setValue={setReceivedValue}
                 errorMessage={receivedValueError}
             />
-            <LabeledInput id="decoded-value" inputMode="numeric" title="Decoded data" value={decodedValue} readOnly />
+            <LabeledInput
+                id="decoded-value"
+                className="w-full input-md"
+                inputMode="numeric"
+                title="Decoded data"
+                value={decodedValue}
+                readOnly
+            />
         </>
     );
 };

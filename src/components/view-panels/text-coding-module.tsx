@@ -1,10 +1,9 @@
 import React from 'react';
 import { sendThroughChannel, convertBinaryToText, convertTextToBinary } from '../../utils';
-import { Channel } from '../channel/channel';
 import { LabeledTextArea } from '../labeled-controls';
 import { useCodecStore, useSettingsStore } from '../../state';
 
-/** Module responsible for text contents coding workflows. */
+/** View panel responsible for text contents coding workflows. */
 export const TextCodingModule: React.FunctionComponent = () => {
     const { distortionProbability } = useSettingsStore();
     const { encodeBinaryString: encode, decodeBinaryString: decode } = useCodecStore();
@@ -36,14 +35,26 @@ export const TextCodingModule: React.FunctionComponent = () => {
         <>
             <LabeledTextArea
                 id="initial-value"
+                className="textarea-bordered h-24"
                 title="Initial data"
                 placeholder="Enter a text to be encoded."
                 value={initialValue}
                 setValue={setInitialValue}
             />
-            <Channel />
-            <LabeledTextArea id="non-coded-data" title="Non-coded text" value={insecureValue} readOnly />
-            <LabeledTextArea id="secure-data" title="Coded text" value={secureValue} readOnly />
+            <LabeledTextArea
+                id="non-coded-data"
+                className="textarea-bordered h-24"
+                title="Non-coded text"
+                value={insecureValue}
+                readOnly
+            />
+            <LabeledTextArea
+                id="secure-data"
+                className="textarea-bordered h-24"
+                title="Coded text"
+                value={secureValue}
+                readOnly
+            />
         </>
     );
 };

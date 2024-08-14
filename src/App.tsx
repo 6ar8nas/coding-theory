@@ -1,7 +1,7 @@
 import React from 'react';
-import { BinaryCodingModule, TextCodingModule, ImageCodingModule, ParametersModule } from './components/modules';
+import { BinaryCodingModule, TextCodingModule, ImageCodingModule } from './components/view-panels';
 import { Header } from './components/header';
-import { ViewMode, defaultViewMode, TabIdentifier } from './data-types';
+import { ViewMode, defaultViewMode, TabIdentifier } from './types';
 
 const tabs: TabIdentifier[] = [
     {
@@ -19,11 +19,6 @@ const tabs: TabIdentifier[] = [
         title: 'Image input',
         component: <ImageCodingModule />,
     },
-    {
-        name: 'parameters',
-        title: 'Change parameters',
-        component: <ParametersModule />,
-    },
 ];
 
 export const App: React.FunctionComponent = () => {
@@ -31,9 +26,24 @@ export const App: React.FunctionComponent = () => {
 
     return (
         <>
-            <Header activeViewMode={activeViewMode} setActiveViewMode={setActiveViewMode} tabs={tabs} />
-            <hr />
-            {tabs.find(x => x.name === activeViewMode)?.component}
+            <Header />
+            <menu role="tablist" className="tabs tabs-bordered grid-cols-3" aria-orientation="horizontal">
+                {tabs.map(x => (
+                    <input
+                        key={x.name}
+                        type="radio"
+                        name="viewmode-tab"
+                        role="tab"
+                        className="tab"
+                        aria-label={x.title}
+                        onClick={() => setActiveViewMode(x.name)}
+                        defaultChecked={defaultViewMode === x.name}
+                    />
+                ))}
+            </menu>
+            <main role="tabpanel" className="p-4">
+                {tabs.find(x => x.name === activeViewMode)?.component}
+            </main>
         </>
     );
 };

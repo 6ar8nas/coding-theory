@@ -1,5 +1,5 @@
 import { validateBinary } from '.';
-import { ImageFileData } from '../data-types';
+import { ImageFileData } from '../types';
 
 /** Image formats that are currently supported by the image conversion utilities. */
 export enum SupportedImageFileFormat {

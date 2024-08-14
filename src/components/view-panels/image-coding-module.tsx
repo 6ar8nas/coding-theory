@@ -1,11 +1,10 @@
 import React from 'react';
 import { sendThroughChannel, convertBlobToImageFileData, convertImageFileDataToBlob } from '../../utils';
-import { Channel } from '../channel/channel';
-import { ImageFileData } from '../../data-types';
+import { ImageFileData } from '../../types';
 import { LabeledFileUpload, LabeledImage } from '../labeled-controls';
 import { useSettingsStore, useCodecStore } from '../../state';
 
-/** Module responsible for image contents coding workflows. */
+/** View panel responsible for image contents coding workflows. */
 export const ImageCodingModule: React.FunctionComponent = () => {
     const { distortionProbability } = useSettingsStore();
     const { encodeBinaryString: encode, decodeBinaryString: decode } = useCodecStore();
@@ -25,10 +24,6 @@ export const ImageCodingModule: React.FunctionComponent = () => {
             }
         };
         getImageBinaryValue();
-    }, [imageFile]);
-
-    const initialImageSource = React.useMemo(() => {
-        if (imageFile) return URL.createObjectURL(imageFile);
     }, [imageFile]);
 
     const finalInsecureImage = React.useMemo(() => {
@@ -66,26 +61,29 @@ export const ImageCodingModule: React.FunctionComponent = () => {
     // Cleaning up after URL object on unmount or file change.
     React.useEffect(
         () => () => {
-            if (initialImageSource) URL.revokeObjectURL(initialImageSource);
             if (finalInsecureImage) URL.revokeObjectURL(finalInsecureImage);
             if (finalSecureImage) URL.revokeObjectURL(finalSecureImage);
         },
-        [initialImageSource, finalInsecureImage, finalSecureImage],
+        [finalInsecureImage, finalSecureImage],
     );
 
     return (
         <>
             <LabeledFileUpload
                 id="initial-image"
+                className="file-input-bordered w-full"
                 title="Upload an image"
                 setValue={setImageFile}
                 errorMessage={imageFileError}
             />
-            <hr />
-            <LabeledImage id="initial-image" title="Initial image" source={initialImageSource} />
-            <Channel />
-            <LabeledImage id="insecure-image" title="Non-coded image" source={finalInsecureImage} />
-            <LabeledImage id="secure-image" title="Coded image" source={finalSecureImage} />
+            <div className="divider" />
+            {finalInsecureImage && finalSecureImage && (
+                <div className="flex w-full flex-col md:flex-row">
+                    <LabeledImage id="insecure-image" title="Non-coded image" src={finalInsecureImage} />
+                    <div className="divider md:divider-horizontal" />
+                    <LabeledImage id="secure-image" title="Coded image" src={finalSecureImage} />
+                </div>
+            )}
         </>
     );
 };
