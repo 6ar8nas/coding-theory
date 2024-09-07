@@ -20,7 +20,7 @@ The application is created using [`React`](https://react.dev), [`TypeScript`](ht
 
 ## Try it out
 
-The static site is published using [`github-pages`](https://pages.github.com). It can be accessed at [6ar8nas.github.io/coding-theory/](6ar8nas.github.io/coding-theory/).
+The static site is published using [`github-pages`](https://pages.github.com). It can be accessed at [6ar8nas.github.io/coding-theory/](https://6ar8nas.github.io/coding-theory/).
 
 ## Running the application locally
 
